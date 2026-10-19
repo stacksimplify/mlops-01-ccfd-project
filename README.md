@@ -7,7 +7,7 @@ description: "Build a credit card fraud detection model in Python, end to end: E
 
 Build a real fraud model in Python: EDA, feature engineering, training, business-metric tuning & a FastAPI inference API.
 
-- **Get the course:** https://stacksimplify.com/courses/machine-learning-end-to-end
+- **Get the course:** https://stacksimplify.com/courses/machine-learning-end-to-end-credit-card-fraud-detection
 - **Course website:** https://machine-learning-end-to-end.stacksimplify.com/
 
 This is the code companion for the course. You build one complete machine learning project, a credit card fraud detector, from raw data to your own prediction API. It is written as plain Python scripts, not notebooks, organized the way real projects are. Every model is judged in dollars saved for the bank, not only by accuracy.
@@ -271,7 +271,7 @@ Good to know: the data is synthetic (we generate it ourselves, so every pattern 
 
 This repo is the code companion. The complete step-by-step course, videos plus written lessons, is on:
 
-- **Get the course:** https://stacksimplify.com/courses/machine-learning-end-to-end
+- **Get the course:** https://stacksimplify.com/courses/machine-learning-end-to-end-credit-card-fraud-detection
 - **Course website:** https://machine-learning-end-to-end.stacksimplify.com/
 
 ---
