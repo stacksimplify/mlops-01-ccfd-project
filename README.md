@@ -239,7 +239,7 @@ python p5_04_inference_api.py
 
 ## Requirements
 
-- **Python basics:** functions, lists, dictionaries and simple classes.
+- **Python basics:** functions, lists, dictionaries and simple classes. New to Python? Take our [Python for Absolute Beginners](https://stacksimplify.com/courses/python-for-absolute-beginners/) course first.
 - **No machine learning experience needed.** Everything is explained as we go.
 - **A computer** (Mac, Windows or Linux) that can run Miniconda and VS Code.
 - **An internet connection** to install the packages.
@@ -273,6 +273,58 @@ This repo is the code companion. The complete step-by-step course, videos plus w
 
 - **Get the course:** https://stacksimplify.com/courses/machine-learning-end-to-end-credit-card-fraud-detection
 - **Course website:** https://machine-learning-end-to-end.stacksimplify.com/
+
+---
+
+## My Other Courses
+
+> All courses available at [stacksimplify.com/courses](https://stacksimplify.com/courses/)
+
+### Python Courses
+
+| Course |
+|--------|
+| [Python for Absolute Beginners: From Zero to Real Projects](https://stacksimplify.com/courses/python-for-absolute-beginners/) |
+
+### AWS Courses
+
+| Course |
+|--------|
+| [AWS EKS Kubernetes Masterclass](https://stacksimplify.com/courses/aws-eks-masterclass/) |
+| [AWS VPC Transit Gateway](https://stacksimplify.com/courses/aws-vpc-transit-gateway/) |
+| [Terraform on AWS with SRE and IaC DevOps](https://stacksimplify.com/courses/terraform-on-aws-sre/) |
+| [Terraform on AWS EKS Kubernetes IaC SRE](https://stacksimplify.com/courses/terraform-aws-eks/) |
+| [HashiCorp Certified: Terraform Associate (AWS)](https://stacksimplify.com/courses/hashicorp-terraform-associate-aws/) |
+| [AWS CloudFormation Simplified](https://stacksimplify.com/courses/aws-cloudformation/) |
+| [AWS Fargate and ECS Masterclass](https://stacksimplify.com/courses/aws-fargate-ecs/) |
+| [AWS CodePipeline CI/CD](https://stacksimplify.com/courses/aws-codepipeline/) |
+| [AWS Elastic Beanstalk Master Class](https://stacksimplify.com/courses/aws-elastic-beanstalk/) |
+| [Ultimate DevOps Real-World Project on AWS](https://stacksimplify.com/courses/ultimate-devops-real-world-project-on-aws/) |
+
+### Azure Courses
+
+| Course |
+|--------|
+| [Azure Kubernetes Service with Azure DevOps and Terraform](https://stacksimplify.com/courses/azure-aks-devops-terraform/) |
+| [Terraform on Azure with IaC DevOps SRE](https://stacksimplify.com/courses/terraform-on-azure/) |
+| [Azure HashiCorp Certified: Terraform Associate](https://stacksimplify.com/courses/hashicorp-terraform-associate-azure/) |
+| [Azure Kubernetes Service AGIC Ingress](https://stacksimplify.com/courses/azure-aks-agic/) |
+
+### GCP Courses
+
+| Course |
+|--------|
+| [GCP Google Kubernetes Engine GKE with DevOps](https://stacksimplify.com/courses/gcp-gke-kubernetes/) |
+| [GCP Associate Cloud Engineer Certification](https://stacksimplify.com/courses/gcp-associate-cloud-engineer/) |
+| [GCP Terraform on Google Cloud](https://stacksimplify.com/courses/gcp-terraform/) |
+| [GCP GKE Terraform on Google Kubernetes Engine](https://stacksimplify.com/courses/gcp-gke-terraform/) |
+
+### DevOps and General
+
+| Course |
+|--------|
+| [Helm Masterclass: 50 Practical Demos](https://stacksimplify.com/courses/helm-masterclass/) |
+| [Docker in a Weekend: 40 Practical Demos](https://stacksimplify.com/courses/docker-weekend/) |
 
 ---
 
