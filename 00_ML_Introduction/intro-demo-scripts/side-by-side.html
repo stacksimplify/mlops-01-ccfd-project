@@ -1,0 +1,103 @@
+<!doctype html>
+<!--
+  Section 00 intro demo: the two real course web pages side by side, unchanged.
+    left  = baseline model API  (p3_02, port 8000, Section 04 B)
+    right = tuned model API     (p5_04, port 8001, Section 08)
+  Run run_intro_demo.sh first (it trains both models and starts both APIs), then open
+  http://localhost:8300/side-by-side.html. Both pages stay fully clickable (Fraud Example, CHECK FRAUD, ...).
+  Each course page's own header is hidden here. This page shows one StackSimplify header on top,
+  a centered label over each side and, at the bottom, the Net Benefit of each model before and after tuning.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baseline vs Tuned</title>
+<style>
+  :root { --bg: #111111; --panel: #161c27; --label: #e2e8f0; --muted: #94a3b8; --base: #60a5fa; --tuned: #34d399; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); overflow: hidden; color: var(--label);
+               font-family: 'Segoe UI', -apple-system, 'Helvetica Neue', Arial, sans-serif; }
+  body { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 16px; }
+
+  /* One StackSimplify header for the whole page (same style as the course page header) */
+  .top { flex: none; text-align: center; }
+  .brand { font-size: 15px; font-weight: 700; letter-spacing: 3px; opacity: .9; }
+  .brand a { color: #fff; text-decoration: none; }
+  .brand a:hover { text-decoration: underline; }
+  h1 { margin-top: 2px; font-size: 34px; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+
+  /* Two columns with a gradient line between them: label, course page, Net Benefit */
+  .grid { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 40px 1fr; grid-template-rows: auto auto 1fr; }
+  .line { grid-column: 2; grid-row: 1 / 4; justify-self: center; width: 6px; border-radius: 3px;
+          background: linear-gradient(to bottom, var(--base), var(--tuned)); }
+  .label { text-align: center; padding: 8px 16px 10px; border-radius: 12px 12px 0 0; background: var(--panel);
+           border-top: 5px solid var(--c); }
+  .label b { display: block; color: var(--c); font-size: 30px; letter-spacing: 1px; }
+  .label span { color: var(--muted); font-size: 16px; }
+  .clip { position: relative; overflow: hidden; }
+  .clip iframe { position: absolute; border: 0; transform-origin: 0 0; background: transparent; }
+  .money { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+           padding: 10px 16px; border-radius: 12px; background: var(--panel); border-bottom: 5px solid var(--c); }
+  .money .row { display: flex; align-items: center; gap: 18px; }
+  .money .tag { font-size: 15px; font-weight: 700; letter-spacing: 2px; color: var(--c); border: 2px solid var(--c);
+                border-radius: 999px; padding: 4px 14px; }
+  .money .amt { font-size: 48px; font-weight: 800; color: #fff; line-height: 1.1; }
+  .money .what { font-size: 16px; color: var(--muted); }
+  .gain { grid-column: 2; grid-row: 3; align-self: center; justify-self: center; z-index: 1; white-space: nowrap;
+          padding: 10px 18px; border-radius: 14px; text-align: center; background: var(--bg);
+          border: 2px solid var(--tuned); box-shadow: 0 0 0 6px var(--bg); }
+  .gain b { display: block; font-size: 26px; color: var(--tuned); }
+  .gain span { font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><a href="https://www.stacksimplify.com/courses" target="_blank">STACKSIMPLIFY</a></div>
+  <h1>🏦 Credit Card Fraud Detection: Baseline vs Tuned</h1>
+</div>
+<div class="grid">
+  <div class="line" aria-hidden="true"></div>
+
+  <div class="label" style="--c: var(--base)"><b>BASELINE ML MODEL</b><span>first model &middot; Section 04 B &middot; localhost:8000</span></div>
+  <div class="label" style="--c: var(--tuned); grid-column: 3"><b>FINAL TUNED ML MODEL</b><span>Section 08 &middot; localhost:8001</span></div>
+
+  <div class="clip"><iframe src="http://localhost:8000/ui" title="Baseline API on port 8000"></iframe></div>
+  <div class="clip" style="grid-column: 3"><iframe src="http://localhost:8001/ui" title="Tuned API on port 8001"></iframe></div>
+
+  <div class="money" style="--c: var(--base)">
+    <div class="row"><span class="tag">BEFORE TUNING</span><span class="amt">$39,625</span></div>
+    <div class="what">Net Benefit on 2,000 test transactions &middot; Logistic Regression on 8 features</div>
+  </div>
+  <div class="gain"><b>+$10,925</b><span>Net Benefit gain</span></div>
+  <div class="money" style="--c: var(--tuned); grid-column: 3">
+    <div class="row"><span class="tag">AFTER TUNING</span><span class="amt">$50,550</span></div>
+    <div class="what">Net Benefit on 2,000 test transactions &middot; catches 57 of 60 test frauds</div>
+  </div>
+</div>
+<script>
+  // Each course page is drawn 1100 px wide (two-column layout; the page switches to one column below 968 px),
+  // then scaled down to fit its column by width AND height, and centered.
+  // HIDE = the course page header (hidden here), SHOW = the part we show (cards + API links),
+  // STRIP_MIN = the least height kept for the Net Benefit strip at the bottom.
+  const PAGE_WIDTH = 1100, HIDE = 143, SHOW = 940, STRIP_MIN = 120;
+  function fit() {
+    const grid = document.querySelector('.grid');
+    const labelH = document.querySelector('.label').offsetHeight;
+    document.querySelectorAll('.clip').forEach(clip => {
+      const f = clip.querySelector('iframe');
+      const w = clip.clientWidth;
+      const s = Math.min(w / PAGE_WIDTH, (grid.clientHeight - labelH - STRIP_MIN) / SHOW);
+      clip.style.height = Math.floor(SHOW * s) + 'px';
+      f.style.width = PAGE_WIDTH + 'px';
+      f.style.height = (HIDE + SHOW + 300) + 'px';   // extra room, so new Recent Predictions do not add a scroll bar
+      f.style.left = ((w - PAGE_WIDTH * s) / 2) + 'px';
+      f.style.top = (-HIDE * s) + 'px';
+      f.style.transform = 'scale(' + s + ')';
+    });
+  }
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>

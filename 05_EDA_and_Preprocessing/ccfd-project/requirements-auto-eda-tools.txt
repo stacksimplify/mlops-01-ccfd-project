@@ -1,0 +1,38 @@
+# =============================================================================
+# Auto-EDA Tools Requirements (LOCKED)
+# Environment: eda-tools-env  (Python 3.13)
+# =============================================================================
+#
+# These are the auto-EDA tools used by:
+#   - p2_02_auto_eda_ydata_profiling.py  (uses fg-data-profiling)
+#   - p2_03_auto_eda_sweetviz.py         (uses sweetviz)
+#
+# Why a SEPARATE env (not mlops-env1)?
+#   - fg-data-profiling needs Python 3.13 (pydantic.v1 breaks on 3.14)
+#   - Keeps your core mlops-env1 + requirements.txt clean and untouched
+#
+# Setup (one-time):
+#   conda create -n eda-tools-env python=3.13 -c conda-forge -y
+#   conda activate eda-tools-env
+#   pip install -r requirements-auto-eda-tools.txt
+#
+# Usage (every time):
+#   conda activate eda-tools-env
+#   python p2_02_auto_eda_ydata_profiling.py    # fg-data-profiling report
+#   python p2_03_auto_eda_sweetviz.py           # sweetviz reports
+#
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Build constraint (fg-data-profiling imports pkg_resources, removed in setuptools 81+)
+# -----------------------------------------------------------------------------
+setuptools<81
+
+# -----------------------------------------------------------------------------
+# Auto-EDA Tools (LOCKED VERSIONS - matches what was used to record this course)
+# -----------------------------------------------------------------------------
+fg-data-profiling==4.19.1
+sweetviz==2.3.3
+
+# Note: pandas, numpy, matplotlib, scipy, jinja2 etc. are pulled in
+#       automatically as dependencies - no need to list them here.

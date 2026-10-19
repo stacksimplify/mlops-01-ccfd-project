@@ -1,0 +1,251 @@
+"""
+Credit Card Fraud Detection - Metrics Utilities
+
+Functions to evaluate ML models using BOTH:
+1. Technical metrics (F1, Precision, Recall) - for data scientists
+2. Business metrics (Net Benefit in $$$) - for executives/stakeholders
+
+Functions:
+- calculate_business_metrics: Convert confusion matrix to business ROI
+- print_metrics: Comprehensive performance report
+- print_confusion_matrix: Readable confusion matrix display
+- print_improvement: Compare baseline vs tuned model
+- save_metrics_json: Save metrics to JSON file
+"""
+
+import pandas as pd
+import numpy as np
+import json
+import os
+from datetime import datetime
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score
+)
+
+
+# Business Constants
+DEFAULT_AVG_FRAUD_AMOUNT = 1500      # Average amount stolen per fraud ($)
+DEFAULT_INVESTIGATION_COST = 25      # Cost to investigate one transaction ($)
+
+
+def _print_header(title):
+    """
+    Print a formatted section header.
+    
+    Args:
+        title: Header text to display
+    
+    Example:
+        _print_header("PERFORMANCE METRICS")
+        # Output:
+        # ======================================================================
+        # 📊 PERFORMANCE METRICS
+        # ======================================================================
+    """
+    print(f"\n{'='*70}")
+    print(f"📊 {title}")
+    print(f"{'='*70}")
+
+
+def calculate_business_metrics(y_true, y_pred, avg_fraud_amount=None, investigation_cost=None):
+    """
+    Convert ML predictions into BUSINESS VALUE (dollars saved/lost)
+    
+    Business Logic:
+    - True Positive (TP):  Catch fraud → Save $1,500, spend $25 → Net: +$1,475
+    - False Positive (FP): False alarm → Waste $25 → Net: -$25
+    - False Negative (FN): Miss fraud → Lose $1,500 → Net: -$1,500
+    - True Negative (TN):  Correct on legitimate → Net: $0
+    
+    Returns:
+        dict: Business metrics including net_benefit
+    """
+    if avg_fraud_amount is None:
+        avg_fraud_amount = DEFAULT_AVG_FRAUD_AMOUNT
+    if investigation_cost is None:
+        investigation_cost = DEFAULT_INVESTIGATION_COST
+    
+    cm = confusion_matrix(y_true, y_pred)
+    tn, fp, fn, tp = cm.ravel()
+    
+    benefit_tp = tp * (avg_fraud_amount - investigation_cost)
+    cost_fp = fp * investigation_cost
+    cost_fn = fn * avg_fraud_amount
+    net_benefit = benefit_tp - cost_fp - cost_fn
+    
+    return {
+        'net_benefit': net_benefit,
+        'fraud_caught': tp,
+        'fraud_missed': fn,
+        'false_alarms': fp,
+        'true_negatives': tn,
+        'total_saved': benefit_tp,
+        'total_cost': cost_fp + cost_fn,
+        'confusion_matrix': cm
+    }
+
+
+def print_confusion_matrix(cm):
+    """
+    Print confusion matrix in human-readable format.
+    
+    Displays a 2x2 confusion matrix with labels for fraud detection:
+    - Rows: Actual class (Legit/Fraud)
+    - Columns: Predicted class (Legit/Fraud)
+    
+    Args:
+        cm: 2x2 numpy array from sklearn.metrics.confusion_matrix()
+             [[TN, FP], [FN, TP]]
+    
+    Example:
+        from sklearn.metrics import confusion_matrix
+        cm = confusion_matrix(y_true, y_pred)
+        print_confusion_matrix(cm)
+        # Output:
+        # 📈 CONFUSION MATRIX:
+        #                 Predicted
+        #                 Legit  Fraud
+        #    Actual Legit  1850    50
+        #    Actual Fraud    30   170
+    """
+    print("\n📈 CONFUSION MATRIX:")
+    print(f"                Predicted")
+    print(f"                Legit  Fraud")
+    print(f"   Actual Legit  {cm[0][0]:4d}  {cm[0][1]:4d}")
+    print(f"   Actual Fraud  {cm[1][0]:4d}  {cm[1][1]:4d}")
+
+
+def print_metrics(algorithm_name, y_true, y_pred, y_pred_proba=None,
+                  avg_fraud_amount=None, investigation_cost=None):
+    """
+    Print comprehensive model evaluation metrics
+    
+    Args:
+        algorithm_name (str): Model name
+        y_true (array): Actual labels
+        y_pred (array): Model predictions
+        y_pred_proba (array, optional): Fraud probabilities
+        
+    Returns:
+        dict: All metrics
+    """
+    _print_header(f"{algorithm_name} - PERFORMANCE METRICS")
+    
+    # Technical Metrics
+    f1 = f1_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+    
+    print("\n🎯 TECHNICAL METRICS:")
+    print(f"   • F1 Score:     {f1:.4f}")
+    print(f"   • Precision:    {precision:.4f}")
+    print(f"   • Recall:       {recall:.4f}")
+    
+    if y_pred_proba is not None:
+        roc_auc = roc_auc_score(y_true, y_pred_proba)
+        print(f"   • ROC AUC:      {roc_auc:.4f}")
+    else:
+        roc_auc = None
+    
+    # Business Metrics
+    business_metrics = calculate_business_metrics(
+        y_true, y_pred, avg_fraud_amount, investigation_cost
+    )
+    
+    print("\n💰 BUSINESS METRICS:")
+    print(f"   • Net Benefit:    ${business_metrics['net_benefit']:,.0f}")
+    print(f"   • Fraud Caught:   {business_metrics['fraud_caught']}")
+    print(f"   • Fraud Missed:   {business_metrics['fraud_missed']}")
+    print(f"   • False Alarms:   {business_metrics['false_alarms']}")
+    
+    # Confusion Matrix
+    print_confusion_matrix(business_metrics['confusion_matrix'])
+    
+    # Classification Report
+    print("\n📋 CLASSIFICATION REPORT:")
+    print(classification_report(y_true, y_pred, target_names=['Legitimate', 'Fraud']))
+    
+    return {
+        'f1': f1,
+        'precision': precision,
+        'recall': recall,
+        'roc_auc': roc_auc,
+        'business_metrics': business_metrics
+    }
+
+
+def print_improvement(baseline_metrics, tuned_metrics, algorithm_name='Model'):
+    """Compare baseline model vs hyperparameter-tuned model"""
+    _print_header(f"{algorithm_name} - BASELINE vs TUNED COMPARISON")
+    
+    f1_improvement = ((tuned_metrics['f1'] - baseline_metrics['f1']) / baseline_metrics['f1']) * 100
+    benefit_improvement = (
+        tuned_metrics['business_metrics']['net_benefit'] - 
+        baseline_metrics['business_metrics']['net_benefit']
+    )
+    
+    print(f"\n   Baseline F1: {baseline_metrics['f1']:.4f} → Tuned F1: {tuned_metrics['f1']:.4f} ({f1_improvement:+.1f}%)")
+    print(f"   Benefit: ${baseline_metrics['business_metrics']['net_benefit']:,} → ${tuned_metrics['business_metrics']['net_benefit']:,} ({'+' if benefit_improvement >= 0 else ''}${benefit_improvement:,})")
+    
+    if tuned_metrics['f1'] > baseline_metrics['f1']:
+        print(f"\n🎉 SUCCESS! Tuned model performs better!")
+    else:
+        print(f"\n✅ Baseline was already well-optimized")
+
+
+def save_metrics_json(metrics, algorithm_name, model_params=None, 
+                      dataset_info=None, save_dir='results'):
+    """
+    Save all metrics to a JSON file
+    
+    Args:
+        metrics (dict): Metrics from print_metrics()
+        algorithm_name (str): Model name
+        model_params (dict, optional): Hyperparameters
+        dataset_info (dict, optional): Dataset metadata
+        save_dir (str): Directory for JSON files
+        
+    Returns:
+        str: Path to saved JSON file
+    """
+    os.makedirs(save_dir, exist_ok=True)
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    clean_name = algorithm_name.lower().replace(" ", "_")
+    
+    business_keys = ['net_benefit', 'fraud_caught', 'fraud_missed', 'false_alarms', 
+                     'true_negatives', 'total_saved', 'total_cost']
+    
+    metrics_data = {
+        "model_info": {
+            "algorithm_name": algorithm_name,
+            "timestamp": datetime.now().isoformat(),
+            "run_id": f"{clean_name}_{timestamp}"
+        },
+        "model_parameters": model_params or {},
+        "technical_metrics": {
+            "f1_score": float(metrics['f1']),
+            "precision": float(metrics['precision']),
+            "recall": float(metrics['recall']),
+            "roc_auc": float(metrics['roc_auc']) if metrics['roc_auc'] else None
+        },
+        "business_metrics": {
+            key: int(metrics['business_metrics'][key]) 
+            for key in business_keys
+        },
+        "dataset_info": dataset_info or {}
+    }
+    
+    json_path = f'{save_dir}/{clean_name}_{timestamp}.json'
+    
+    with open(json_path, 'w') as f:
+        json.dump(metrics_data, f, indent=4)
+    
+    print(f"\n📊 Metrics saved to: {json_path}")
+    
+    return json_path

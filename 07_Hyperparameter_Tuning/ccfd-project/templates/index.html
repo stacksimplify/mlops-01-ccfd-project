@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Fraud Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #111111;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .brand {
+            font-size: 1em;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .brand a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .brand a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .card h2 {
+            color: #0ea5e9;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #0ea5e9;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .example-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-example {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #0ea5e9;
+            background: white;
+            color: #0ea5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-example:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .btn-fraud {
+            border-color: #e53e3e;
+            color: #e53e3e;
+        }
+
+        .btn-fraud:hover {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-legit {
+            border-color: #38a169;
+            color: #38a169;
+        }
+
+        .btn-legit:hover {
+            background: #38a169;
+            color: white;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        .result-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-fraud {
+            background: #fed7d7;
+            border-left: 5px solid #e53e3e;
+        }
+
+        .result-legitimate {
+            background: #c6f6d5;
+            border-left: 5px solid #38a169;
+        }
+
+        .result-medium {
+            background: #fef5e7;
+            border-left: 5px solid #f39c12;
+        }
+
+        .result-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .result-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .metric {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-message {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+            font-size: 1.05em;
+        }
+
+        .history {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #0ea5e9;
+            background: #f8f9fa;
+            transition: all 0.3s;
+        }
+
+        .history-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .history-prediction {
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .history-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .history-details {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #0ea5e9;
+            font-size: 1.2em;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .risk-low {
+            background: #38a169;
+            color: white;
+        }
+
+        .risk-medium {
+            background: #f39c12;
+            color: white;
+        }
+
+        .risk-high {
+            background: #e67e22;
+            color: white;
+        }
+
+        .risk-critical {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .api-link {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .api-link a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .api-link a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand"><a href="https://www.stacksimplify.com/courses" target="_blank">STACKSIMPLIFY</a></div>
+            <h1>🏦 Credit Card Fraud Detection</h1>
+            <p>Baseline Model — Real-time fraud detection powered by Logistic Regression ML</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Left Panel: Input Form -->
+            <div class="card">
+                <h2>Transaction Details</h2>
+                
+                <!-- Quick Example Buttons -->
+                <div class="example-buttons">
+                    <button class="btn-example btn-fraud" onclick="loadFraudExample()">
+                        ⚠️ Fraud Example
+                    </button>
+                    <button class="btn-example btn-legit" onclick="loadLegitExample()">
+                        ✅ Legit Example
+                    </button>
+                    <button class="btn-example" onclick="loadMediumExample()">
+                        ⚡ Medium Risk
+                    </button>
+                </div>
+
+                <form id="fraudForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transaction_amount">💰 Transaction Amount ($)</label>
+                            <input type="number" id="transaction_amount" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="transaction_hour">🕐 Transaction Hour (0-23)</label>
+                            <select id="transaction_hour" required>
+                                <option value="">Select hour...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="days_since_last_txn">📅 Days Since Last Transaction</label>
+                            <input type="number" id="days_since_last_txn" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="avg_transaction_amount">📊 Average Transaction ($)</label>
+                            <input type="number" id="avg_transaction_amount" step="0.01" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="merchant_category">🏪 Merchant Category</label>
+                        <select id="merchant_category" required>
+                            <option value="">Select category...</option>
+                            <option value="grocery">Grocery</option>
+                            <option value="gas_station">Gas Station</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="retail">Retail</option>
+                            <option value="online_shopping">Online Shopping</option>
+                            <option value="pharmacy">Pharmacy</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="furniture">Furniture</option>
+                            <option value="jewelry">Jewelry</option>
+                            <option value="travel">Travel</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card_present">💳 Card Present?</label>
+                            <select id="card_present" required>
+                                <option value="">Select...</option>
+                                <option value="yes">Yes (In-Person)</option>
+                                <option value="no">No (Online/Phone)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="international">🌍 International?</label>
+                            <select id="international" required>
+                                <option value="">Select...</option>
+                                <option value="no">No (Domestic)</option>
+                                <option value="yes">Yes (International)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transaction_count_24h">📈 Transactions in Last 24h</label>
+                        <input type="number" id="transaction_count_24h" min="1" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            🔍 Check Fraud
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearForm()">
+                            🔄 Clear Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Panel: Results & History -->
+            <div class="card">
+                <h2>Results</h2>
+                <div id="result">
+                    <div style="text-align: center; padding: 40px; color: #999;">
+                        <div style="font-size: 4em; margin-bottom: 20px;">🔍</div>
+                        <p style="font-size: 1.2em;">Enter transaction details and click "Check Fraud" to see results</p>
+                    </div>
+                </div>
+
+                <div id="history-section" style="display: none;">
+                    <h2 style="margin-top: 30px;">📋 Recent Predictions</h2>
+                    <div id="history" class="history"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-link">
+            <a href="/">📊 API Info</a>
+            <a href="/docs">📚 API Documentation</a>
+            <a href="/health">💚 Health Check</a>
+        </div>
+    </div>
+
+    <script>
+        // Populate hour dropdown
+        const hourSelect = document.getElementById('transaction_hour');
+        for (let i = 0; i <= 23; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `${i}:00 (${i < 12 ? i || 12 : i - 12 || 12} ${i < 12 ? 'AM' : 'PM'})`;
+            hourSelect.appendChild(option);
+        }
+
+        // History storage
+        let predictionHistory = [];
+
+        // Load Fraud Example
+        function loadFraudExample() {
+            document.getElementById('transaction_amount').value = 2500.00;
+            document.getElementById('transaction_hour').value = 2;
+            document.getElementById('days_since_last_txn').value = 0;
+            document.getElementById('avg_transaction_amount').value = 120.00;
+            document.getElementById('merchant_category').value = 'electronics';
+            document.getElementById('card_present').value = 'no';
+            document.getElementById('international').value = 'yes';
+            document.getElementById('transaction_count_24h').value = 7;
+        }
+
+        // Load Legitimate Example
+        function loadLegitExample() {
+            document.getElementById('transaction_amount').value = 75.00;
+            document.getElementById('transaction_hour').value = 14;
+            document.getElementById('days_since_last_txn').value = 2;
+            document.getElementById('avg_transaction_amount').value = 80.00;
+            document.getElementById('merchant_category').value = 'grocery';
+            document.getElementById('card_present').value = 'yes';
+            document.getElementById('international').value = 'no';
+            document.getElementById('transaction_count_24h').value = 1;
+        }
+
+        // Load Medium Risk Example
+        function loadMediumExample() {
+            document.getElementById('transaction_amount').value = 500.00;
+            document.getElementById('transaction_hour').value = 20;
+            document.getElementById('days_since_last_txn').value = 0;
+            document.getElementById('avg_transaction_amount').value = 150.00;
+            document.getElementById('merchant_category').value = 'online_shopping';
+            document.getElementById('card_present').value = 'no';
+            document.getElementById('international').value = 'no';
+            document.getElementById('transaction_count_24h').value = 2;
+        }
+
+        // Clear Form
+        function clearForm() {
+            document.getElementById('fraudForm').reset();
+        }
+
+        // Handle Form Submission
+        document.getElementById('fraudForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Show loading
+            document.getElementById('result').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing transaction...</p>
+                </div>
+            `;
+
+            // Collect form data
+            const data = {
+                transaction_amount: parseFloat(document.getElementById('transaction_amount').value),
+                transaction_hour: parseInt(document.getElementById('transaction_hour').value),
+                days_since_last_txn: parseInt(document.getElementById('days_since_last_txn').value),
+                avg_transaction_amount: parseFloat(document.getElementById('avg_transaction_amount').value),
+                merchant_category: document.getElementById('merchant_category').value,
+                card_present: document.getElementById('card_present').value,
+                international: document.getElementById('international').value,
+                transaction_count_24h: parseInt(document.getElementById('transaction_count_24h').value)
+            };
+
+            try {
+                // Call API
+                const response = await fetch('/inference', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Display result
+                displayResult(result, data);
+
+                // Add to history
+                addToHistory(result, data);
+
+            } catch (error) {
+                document.getElementById('result').innerHTML = `
+                    <div class="result-box" style="background: #fed7d7; border-left: 5px solid #e53e3e;">
+                        <div class="result-title">❌ Error</div>
+                        <p>Failed to get prediction: ${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 0.9em;">Make sure the API is running!</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Display Result
+        function displayResult(result, inputData) {
+            const isFraud = result.prediction === 'FRAUD';
+            const resultClass = isFraud ? 'result-fraud' : 'result-legitimate';
+            const icon = isFraud ? '⚠️' : '✅';
+            const riskClass = `risk-${result.risk_score.toLowerCase()}`;
+
+            const html = `
+                <div class="result-box ${resultClass}">
+                    <div class="result-title">
+                        ${icon} ${result.prediction}
+                        <span class="risk-badge ${riskClass}">${result.risk_score}</span>
+                    </div>
+
+                    <div class="result-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Fraud Probability</div>
+                            <div class="metric-value">${(result.probability * 100).toFixed(1)}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Confidence</div>
+                            <div class="metric-value">${(result.confidence * 100).toFixed(1)}%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Amount</div>
+                            <div class="metric-value">$${inputData.transaction_amount.toFixed(2)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Category</div>
+                            <div class="metric-value" style="font-size: 1em;">${inputData.merchant_category}</div>
+                        </div>
+                    </div>
+
+                    <div class="result-message">
+                        ${result.message}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('result').innerHTML = html;
+        }
+
+        // Add to History
+        function addToHistory(result, inputData) {
+            const timestamp = new Date().toLocaleString();
+            const historyItem = {
+                result: result,
+                input: inputData,
+                timestamp: timestamp
+            };
+
+            predictionHistory.unshift(historyItem);
+            
+            // Keep only last 10
+            if (predictionHistory.length > 10) {
+                predictionHistory = predictionHistory.slice(0, 10);
+            }
+
+            updateHistoryDisplay();
+        }
+
+        // Update History Display
+        function updateHistoryDisplay() {
+            const historyDiv = document.getElementById('history');
+            const historySection = document.getElementById('history-section');
+
+            if (predictionHistory.length === 0) {
+                historySection.style.display = 'none';
+                return;
+            }
+
+            historySection.style.display = 'block';
+
+            const historyHtml = predictionHistory.map(item => {
+                const isFraud = item.result.prediction === 'FRAUD';
+                const icon = isFraud ? '⚠️' : '✅';
+                const riskClass = `risk-${item.result.risk_score.toLowerCase()}`;
+
+                return `
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-prediction">
+                                ${icon} ${item.result.prediction}
+                                <span class="risk-badge ${riskClass}">${item.result.risk_score}</span>
+                            </span>
+                            <span class="history-time">${item.timestamp}</span>
+                        </div>
+                        <div class="history-details">
+                            $${item.input.transaction_amount.toFixed(2)} • ${item.input.merchant_category} • 
+                            ${item.input.card_present === 'yes' ? 'Card Present' : 'Card Not Present'} • 
+                            ${(item.result.probability * 100).toFixed(1)}% fraud probability
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            historyDiv.innerHTML = historyHtml;
+        }
+
+        // Load a legitimate example on page load
+        window.addEventListener('load', () => {
+            loadLegitExample();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+# Generated data
+data/
+
+# Trained models
+models/
+
+# Results/metrics output
+results/
+
+# Pipeline artifacts (YAML configs passed between scripts in Section 07)
+artifacts/
+
+# EDA plots
+eda_plots/
+
+# Auto-EDA reports (generated HTML from ydata-profiling, sweetviz, autoviz, evidently)
+auto_eda_reports/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Microsoft Word temporary lock files
+~$*.docx
+~$*.doc
+~$*.xlsx
+~$*.xls
