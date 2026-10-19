@@ -241,7 +241,7 @@ python p5_04_inference_api.py
 
 - **Python basics:** functions, lists, dictionaries and simple classes.
 - **No machine learning experience needed.** Everything is explained as we go.
-- **A computer** (Mac or Windows) that can run Miniconda and VS Code.
+- **A computer** (Mac, Windows or Linux) that can run Miniconda and VS Code.
 - **An internet connection** to install the packages.
 
 ## Who This Course Is For

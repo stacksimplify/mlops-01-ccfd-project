@@ -196,6 +196,8 @@ open eda_plots/04_fraud_vs_legitimate_numerical.png
 open eda_plots/06_correlation_heatmap.png
 ```
 
+On Linux, use `xdg-open` instead of `open`.
+
 **Windows (PowerShell):**
 
 ```powershell
@@ -297,7 +299,7 @@ python p2_02_auto_eda_ydata_profiling.py
 open auto_eda_reports/data_profiling/*.html
 ```
 
-On Windows, open the reports with:
+On Linux, use `xdg-open` instead of `open`. On Windows, open the reports with:
 
 ```powershell
 Invoke-Item auto_eda_reports/data_profiling/*.html
@@ -317,7 +319,7 @@ python p2_03_auto_eda_sweetviz.py
 open auto_eda_reports/sweetviz/*.html
 ```
 
-On Windows, open the reports with:
+On Linux, use `xdg-open` instead of `open`. On Windows, open the reports with:
 
 ```powershell
 Invoke-Item auto_eda_reports/sweetviz/*.html

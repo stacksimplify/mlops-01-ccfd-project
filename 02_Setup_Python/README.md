@@ -63,6 +63,19 @@ conda init powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 ```
 
+### Step-01-03: Linux
+
+```bash
+# Download and run the Miniconda installer (Arm Linux: Miniconda3-latest-Linux-aarch64.sh)
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+
+# Set up conda for your bash terminal, then close it and open a new one
+~/miniconda3/bin/conda init bash
+```
+
+The installer asks a few questions: press Enter to read the license, type `yes`, and keep the default folder (`~/miniconda3`). After this, the steps below are the same as on the Mac.
+
 ### Verify Installation (both platforms)
 
 ```bash
@@ -160,7 +173,7 @@ sklearn version: 1.8.0
 
 ## Troubleshooting
 
-**"conda: command not found" (macOS)**
+**"conda: command not found" (macOS and Linux)**
 - Restart your terminal after Miniconda installation
 - Run conda's own init with its full path, then restart the terminal: `~/miniconda3/bin/conda init zsh` (Homebrew Miniconda: `/opt/homebrew/Caskroom/miniconda/base/bin/conda init zsh`; use `bash` instead of `zsh` if `echo $SHELL` shows `/bin/bash`)
 - Or manually: `source ~/.zshrc`
