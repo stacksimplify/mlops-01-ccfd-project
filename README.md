@@ -14,6 +14,10 @@ This is the code companion for the course. You build one complete machine learni
 
 ## The Course in Pictures
 
+**The course at a glance**
+
+![Course at a glance: Machine Learning End-to-End: Credit Card Fraud Detection. Build a real fraud model in Python, from raw data to your own FastAPI inference API. 15 hours of video, 92 lectures, 10 sections and 2 FastAPI APIs. Made for DevOps, SRE and cloud engineers moving into machine learning, and also for MLOps and AIOps engineers, developers, data engineers and students, and Python learners. Tech stack: plain Python scripts, not notebooks, with Python, pandas, NumPy, scikit-learn, Matplotlib, Seaborn, FastAPI, Pydantic, Uvicorn, Miniconda and VS Code. One project, built section by section: 00 Introduction, 01 ML Fundamentals, 02 Python Setup, 03 Synthetic Dataset and 04 A Model Training, then 04 B Inference API, 05 Data Analysis (EDA), 06 Feature Engineering, 07 Hyperparameter Tuning and 08 Tuned Inference API. Up next: the MLOps series on AWS, Azure, GCP and open source, and this course is the foundation](images/00-00-02-CourseAtAGlance.png)
+
 **Our project: from a card swipe to a decision**
 
 ![Our project, Credit Card Fraud Detection, from a card swipe to a decision: a customer swipes a card; the transaction data (amount, time, merchant and more) goes to the ML fraud detection model we build, a logistic regression behind a FastAPI inference API; the model gives a fraud probability; a high probability means flag the transaction for review as FRAUD, and a low one means approve it as LEGITIMATE](images/00-01-00-OurProject.png)
